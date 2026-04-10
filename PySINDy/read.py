@@ -17,9 +17,7 @@ import config
 
 
 """
-Section 1
-Schema and case container.
-"""
+
 
 RAW_COLUMNS = ["time_step", "flow_time", "vy", "vx", "cl", "cd"]
 
@@ -34,22 +32,10 @@ class CaseData:
 
 
 """
-Section 2
-Filesystem and split helpers.
-"""
-
 
 def ensure_output_dir() -> Path:
     config.OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     return config.OUTPUT_DIR
-
-
-def case_group_from_name(name: str) -> str:
-    return name[:1].upper() if name else "?"
-
-
-def is_test_case(name: str) -> bool:
-    return name.upper().startswith(config.TEST_PREFIXES)
 
 
 def discover_data_files(data_dir: Path | None = None) -> list[Path]:
