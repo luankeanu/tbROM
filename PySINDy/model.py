@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 
 import config
-import pipeline
+import read
 
 try:
     import pysindy as ps
@@ -114,9 +114,9 @@ def regression_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> dict:
     }
 
 
-def fit_model(params: dict, train_cases: list[pipeline.CaseData]):
+def fit_model(params: dict, train_cases: list[read.CaseData]):
     model = build_model(params)
-    x_train, u_train, t_train, _ = pipeline.trajectory_matrices(
+    x_train, u_train, t_train, _ = read.trajectory_matrices(
         train_cases,
         include_pitch_rate=params["include_pitch_rate"],
         include_pitch_acceleration=params["include_pitch_acceleration"],
@@ -147,8 +147,8 @@ def control_function(time: np.ndarray, control: np.ndarray):
     return u_fun
 
 
-def simulate_case(model, case: pipeline.CaseData, params: dict) -> np.ndarray:
-    feature_cols = pipeline.feature_columns(
+def simulate_case(model, case: read.CaseData, params: dict) -> np.ndarray:
+    feature_cols = read.feature_columns(
         params["include_pitch_rate"],
         params["include_pitch_acceleration"],
     )
@@ -159,7 +159,7 @@ def simulate_case(model, case: pipeline.CaseData, params: dict) -> np.ndarray:
     return np.asarray(prediction)
 
 
-def evaluate_cases(model, cases: list[pipeline.CaseData], params: dict, split_name: str) -> pd.DataFrame:
+def evaluate_cases(model, cases: list[read.CaseData], params: dict, split_name: str) -> pd.DataFrame:
     rows = []
     for case in cases:
         truth = case.frame[["cl", "cd"]].to_numpy()
@@ -175,7 +175,7 @@ def evaluate_cases(model, cases: list[pipeline.CaseData], params: dict, split_na
     return pd.DataFrame(rows)
 
 
-def prediction_frame(model, cases: list[pipeline.CaseData], params: dict, split_name: str) -> pd.DataFrame:
+def prediction_frame(model, cases: list[read.CaseData], params: dict, split_name: str) -> pd.DataFrame:
     rows = []
     for case in cases:
         truth = case.frame[["cl", "cd"]].to_numpy()
@@ -199,7 +199,7 @@ def hyperparameter_combinations() -> list[dict]:
 
 
 def search(
-    train_cases: list[pipeline.CaseData],
+    train_cases: list[read.CaseData],
 ) -> tuple[dict, pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, object]:
     require_pysindy()
 
@@ -213,7 +213,7 @@ def search(
 
     log_progress(
         f"Hyperparameter search will evaluate {len(combinations)} combinations "
-        f"across {len(pipeline.validation_splits(train_cases))} validation splits."
+        f"across {len(read.validation_splits(train_cases))} validation splits."
     )
 
     for index, params in enumerate(combinations, start=1):
@@ -223,7 +223,7 @@ def search(
         split_validation_tables = []
         split_validation_predictions = []
 
-        for train_fold, validation_fold, split_name in pipeline.validation_splits(train_cases):
+        for train_fold, validation_fold, split_name in read.validation_splits(train_cases):
             if not validation_fold:
                 continue
 
@@ -339,5 +339,5 @@ def save_best_summary(best_result: dict, path: Path | None = None) -> Path:
     return target
 
 
-def export_predictions(model, cases: list[pipeline.CaseData], params: dict) -> pd.DataFrame:
+def export_predictions(model, cases: list[read.CaseData], params: dict) -> pd.DataFrame:
     return prediction_frame(model, cases, params, split_name="full_model")
