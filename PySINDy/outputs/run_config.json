@@ -1,0 +1,49 @@
+{
+  "data_dir": "/Volumes/LUAN KEANU/Model/PySINDy/Data",
+  "output_dir": "/Volumes/LUAN KEANU/Model/PySINDy/outputs",
+  "test_prefixes": [
+    "T"
+  ],
+  "header_lines": 3,
+  "rows_to_skip": 500,
+  "expected_numeric_rows": 8000,
+  "expected_retained_rows": 7500,
+  "pitch_in_degrees": true,
+  "include_pitch_acceleration": false,
+  "plot_window": null,
+  "validation_mode": "leave_one_file_out",
+  "holdout_files": [],
+  "hyperparameter_grid": {
+    "optimizer": [
+      "stlsq",
+      "sr3"
+    ],
+    "threshold": [
+      0.01,
+      0.05,
+      0.1
+    ],
+    "alpha": [
+      0.0,
+      0.01,
+      0.05
+    ],
+    "degree": [
+      1,
+      2,
+      3
+    ],
+    "fourier_n_frequencies": [
+      0,
+      1,
+      2
+    ],
+    "include_pitch_rate": [
+      true
+    ],
+    "include_pitch_acceleration": [
+      false
+    ]
+  },
+  "selection_metric": "rmse_mean"
+}
