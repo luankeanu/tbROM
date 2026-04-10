@@ -1,5 +1,6 @@
 """
-Data ingestion and feature engineering for buffet simulations.
+Read module for buffet simulations.
+This file is intentionally designed as a sectioned script-style data layer.
 """
 
 from __future__ import annotations
@@ -15,6 +16,11 @@ import pandas as pd
 import config
 
 
+"""
+Section 1
+Schema and case container.
+"""
+
 RAW_COLUMNS = ["time_step", "flow_time", "vy", "vx", "cl", "cd"]
 
 
@@ -25,6 +31,12 @@ class CaseData:
     case_group: str
     is_test: bool
     frame: pd.DataFrame
+
+
+"""
+Section 2
+Filesystem and split helpers.
+"""
 
 
 def ensure_output_dir() -> Path:
@@ -40,27 +52,17 @@ def is_test_case(name: str) -> bool:
     return name.upper().startswith(config.TEST_PREFIXES)
 
 
-def smooth_series(values: np.ndarray, window: int) -> np.ndarray:
-    if window <= 1 or len(values) < window:
-        return values
-    if window % 2 == 0:
-        window += 1
-    kernel = np.ones(window, dtype=float) / float(window)
-    padded = np.pad(values, (window // 2, window // 2), mode="edge")
-    return np.convolve(padded, kernel, mode="valid")
-
-
-def differentiate(values: np.ndarray, time: np.ndarray) -> np.ndarray:
-    if len(values) < 3:
-        return np.zeros_like(values)
-    return np.gradient(values, time, edge_order=2)
-
-
 def discover_data_files(data_dir: Path | None = None) -> list[Path]:
     target_dir = data_dir or config.DATA_DIR
     return sorted(
         path for path in target_dir.glob("*.out") if not path.name.startswith("._")
     )
+
+
+"""
+Section 3
+Import and validation.
+"""
 
 
 def read_case_file(path: Path) -> pd.DataFrame:
@@ -97,6 +99,28 @@ def validate_raw_frame(frame: pd.DataFrame, expected_rows: int) -> dict:
     return validation
 
 
+"""
+Section 4
+Treatment and feature engineering.
+"""
+
+
+def smooth_series(values: np.ndarray, window: int) -> np.ndarray:
+    if window <= 1 or len(values) < window:
+        return values
+    if window % 2 == 0:
+        window += 1
+    kernel = np.ones(window, dtype=float) / float(window)
+    padded = np.pad(values, (window // 2, window // 2), mode="edge")
+    return np.convolve(padded, kernel, mode="valid")
+
+
+def differentiate(values: np.ndarray, time: np.ndarray) -> np.ndarray:
+    if len(values) < 3:
+        return np.zeros_like(values)
+    return np.gradient(values, time, edge_order=2)
+
+
 def trim_frame(frame: pd.DataFrame) -> pd.DataFrame:
     return frame.iloc[config.ROWS_TO_SKIP :].reset_index(drop=True)
 
@@ -105,10 +129,11 @@ def add_pitch_features(frame: pd.DataFrame) -> pd.DataFrame:
     data = frame.copy()
     pitch_rad = np.arctan2(data["vy"].to_numpy(), data["vx"].to_numpy())
     pitch_deg = np.degrees(pitch_rad)
-    pitch_base = pitch_deg if config.PITCH_IN_DEGREES else pitch_rad
-    pitch_base = smooth_series(pitch_base, config.SMOOTHING_WINDOW)
+    pitch_working = pitch_deg if config.PITCH_IN_DEGREES else pitch_rad
+    pitch_smooth = smooth_series(pitch_working, config.SMOOTHING_WINDOW)
+
     pitch_rate = smooth_series(
-        differentiate(pitch_base, data["flow_time"].to_numpy()),
+        differentiate(pitch_smooth, data["flow_time"].to_numpy()),
         config.SMOOTHING_WINDOW,
     )
     pitch_accel = smooth_series(
@@ -118,12 +143,18 @@ def add_pitch_features(frame: pd.DataFrame) -> pd.DataFrame:
 
     data["pitch_rad"] = pitch_rad
     data["pitch_deg"] = pitch_deg
-    data["pitch"] = pitch_deg if config.PITCH_IN_DEGREES else pitch_rad
+    data["pitch"] = pitch_working
     data["pitch_rate"] = pitch_rate
     data["pitch_accel"] = pitch_accel
     data["cl_lag1"] = data["cl"].shift(1).bfill()
     data["cd_lag1"] = data["cd"].shift(1).bfill()
     return data
+
+
+"""
+Section 5
+Per-case build and runtime debug output.
+"""
 
 
 def prepare_case(path: Path) -> tuple[CaseData, dict]:
@@ -159,13 +190,40 @@ def prepare_case(path: Path) -> tuple[CaseData, dict]:
 
 
 def load_all_cases(data_dir: Path | None = None) -> tuple[list[CaseData], pd.DataFrame]:
-    cases = []
-    rows = []
-    for path in discover_data_files(data_dir):
-        case, validation = prepare_case(path)
+    files = discover_data_files(data_dir)
+    print(f"[read] files found: {len(files)}", flush=True)
+
+    cases: list[CaseData] = []
+    rows: list[dict] = []
+
+    for file_path in files:
+        case, validation = prepare_case(file_path)
         cases.append(case)
         rows.append(validation)
-    return cases, pd.DataFrame(rows)
+        split_label = "TEST" if case.is_test else "TRAIN"
+        print(
+            f"[read] loaded {file_path.name} as {split_label} "
+            f"with {validation['retained_rows']} retained rows",
+            flush=True,
+        )
+
+    validation_df = pd.DataFrame(rows)
+    train_count = sum(not case.is_test for case in cases)
+    test_count = sum(case.is_test for case in cases)
+    print(f"[read] train cases: {train_count}", flush=True)
+    print(f"[read] test cases: {test_count}", flush=True)
+
+    if not validation_df.empty:
+        valid_count = int(validation_df["is_valid"].sum())
+        print(f"[read] valid files: {valid_count}/{len(validation_df)}", flush=True)
+
+    return cases, validation_df
+
+
+"""
+Section 6
+Combined exports and summary tables.
+"""
 
 
 def combined_database(cases: Iterable[CaseData]) -> pd.DataFrame:
@@ -205,6 +263,7 @@ def case_summary(cases: Iterable[CaseData]) -> pd.DataFrame:
 
 def export_prepared_data(cases: list[CaseData], validation_df: pd.DataFrame) -> dict[str, Path]:
     ensure_output_dir()
+
     database_df = combined_database(cases)
     summary_df = case_summary(cases)
     correlation_cols = ["vx", "vy", "pitch_deg", "pitch_rate", "pitch_accel", "cl", "cd"]
@@ -216,11 +275,19 @@ def export_prepared_data(cases: list[CaseData], validation_df: pd.DataFrame) -> 
         "summary": config.OUTPUT_DIR / config.CASE_SUMMARY_FILE,
         "correlation": config.OUTPUT_DIR / config.CORRELATION_FILE,
     }
+
     validation_df.to_csv(paths["validation"], index=False)
     database_df.to_csv(paths["database"], index=False)
     summary_df.to_csv(paths["summary"], index=False)
     correlation_df.to_csv(paths["correlation"])
+
     return paths
+
+
+"""
+Section 7
+Model-facing trajectory utilities.
+"""
 
 
 def split_cases(cases: list[CaseData]) -> tuple[list[CaseData], list[CaseData]]:
@@ -254,6 +321,7 @@ def trajectory_matrices(
 def validation_splits(cases: list[CaseData]) -> list[tuple[list[CaseData], list[CaseData], str]]:
     if len(cases) < 2:
         return [(cases, [], "no_validation_split")]
+
     if config.VALIDATION_MODE == "single_holdout":
         holdout_names = set(config.HOLDOUT_FILES)
         val_cases = [case for case in cases if case.name in holdout_names]
@@ -261,10 +329,17 @@ def validation_splits(cases: list[CaseData]) -> list[tuple[list[CaseData], list[
         if train_cases and val_cases:
             label = "holdout_" + "_".join(case.name for case in val_cases)
             return [(train_cases, val_cases, label)]
+
     return [
         ([item for item in cases if item.name != case.name], [case], f"holdout_{case.name}")
         for case in cases
     ]
+
+
+"""
+Section 8
+Run configuration snapshot.
+"""
 
 
 def export_run_config() -> Path:

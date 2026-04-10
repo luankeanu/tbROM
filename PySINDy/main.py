@@ -7,7 +7,7 @@ from __future__ import annotations
 import analyse
 import config
 import model
-import pipeline
+import read
 
 
 def log_step(message: str) -> None:
@@ -17,11 +17,11 @@ def log_step(message: str) -> None:
 
 def main() -> None:
     log_step("Initialising output directory and exporting run config...")
-    pipeline.ensure_output_dir()
-    pipeline.export_run_config()
+    read.ensure_output_dir()
+    read.export_run_config()
 
     log_step(f"Loading and validating cases from {config.DATA_DIR}...")
-    cases, validation_df = pipeline.load_all_cases()
+    cases, validation_df = read.load_all_cases()
     if validation_df.empty:
         raise RuntimeError(f"No .out files were found in {config.DATA_DIR}")
     if not validation_df["is_valid"].all():
@@ -30,13 +30,13 @@ def main() -> None:
     log_step(f"Loaded {len(cases)} valid case files.")
 
     log_step("Exporting prepared data tables...")
-    pipeline.export_prepared_data(cases, validation_df)
-    database_df = pipeline.combined_database(cases)
+    read.export_prepared_data(cases, validation_df)
+    database_df = read.combined_database(cases)
     log_step("Generating correlation heatmap and overlay plots...")
     analyse.plot_correlation_heatmap(database_df)
     analyse.plot_case_overlays(cases)
 
-    train_cases, test_cases = pipeline.split_cases(cases)
+    train_cases, test_cases = read.split_cases(cases)
     if len(train_cases) < 2:
         raise RuntimeError("At least two non-test files are needed for grouped validation.")
     log_step(
