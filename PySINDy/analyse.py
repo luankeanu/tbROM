@@ -11,11 +11,11 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 import config
-import pipeline
+import read
 
 
 def save_metrics(train_metrics: pd.DataFrame, validation_metrics: pd.DataFrame) -> dict[str, Path]:
-    pipeline.ensure_output_dir()
+    read.ensure_output_dir()
     train_path = config.OUTPUT_DIR / config.TRAIN_METRICS_FILE
     validation_path = config.OUTPUT_DIR / config.VALIDATION_METRICS_FILE
     train_metrics.to_csv(train_path, index=False)
@@ -68,7 +68,7 @@ def plot_correlation_heatmap(database_df: pd.DataFrame) -> Path | None:
     return save_and_show_plot(fig, path)
 
 
-def plot_case_overlays(cases: list[pipeline.CaseData]) -> list[Path]:
+def plot_case_overlays(cases: list[read.CaseData]) -> list[Path]:
     if not cases:
         return []
 
