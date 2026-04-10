@@ -17,8 +17,9 @@ import config
 
 
 """
-Section 1
-Schema and case container.
+Section 1: Schema and case container.
+Creates a dataclass used as the container for one simulation;
+    Contains metadata (name, path etc) and the data itself in 'frame'
 """
 
 RAW_COLUMNS = ["time_step", "flow_time", "vy", "vx", "cl", "cd"]
@@ -34,24 +35,26 @@ class CaseData:
 
 
 """
-Section 2
-Filesystem and split helpers.
+Section 2: Filesystem and split helpers.
+
+ensure_output creates \outputs\ folder
+the other 3 functions extract the necessary info from the simulation data files.
 """
 
-
+# potentially move this into utils.py
 def ensure_output_dir() -> Path:
     config.OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     return config.OUTPUT_DIR
 
-
+# potentially move this into utils.py
 def case_group_from_name(name: str) -> str:
     return name[:1].upper() if name else "?"
 
-
+# potentially move this into utils.py
 def is_test_case(name: str) -> bool:
     return name.upper().startswith(config.TEST_PREFIXES)
 
-
+# potentially move this into utils.py
 def discover_data_files(data_dir: Path | None = None) -> list[Path]:
     target_dir = data_dir or config.DATA_DIR
     return sorted(
