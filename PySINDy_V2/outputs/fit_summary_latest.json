@@ -1,0 +1,38 @@
+{
+  "fit_index": 2,
+  "source_mode": "reused_prepared_outputs",
+  "train_case_count": 21,
+  "train_row_count": 157500,
+  "nonzero_coefficient_count": 39,
+  "coefficient_matrix_shape": [
+    2,
+    20
+  ],
+  "model_summary": {
+    "model_name": "baseline_pysindy_control_model",
+    "description": "Sparse polynomial SINDy model with cl/cd as states and pitch as control.",
+    "state_columns": [
+      "cl",
+      "cd"
+    ],
+    "control_columns": [
+      "pitch"
+    ],
+    "time_column": "flow_time",
+    "library_type": "polynomial",
+    "polynomial_degree": 3,
+    "include_bias": true,
+    "include_interaction": true,
+    "optimizer_type": "stlsq",
+    "threshold": 0.1,
+    "alpha": 0.05,
+    "max_iter": 20,
+    "normalize_columns": false,
+    "differentiation_type": "finite_difference",
+    "finite_difference_order": 2
+  },
+  "equations": [
+    "d(cl)/dt = -742.482 1 +  4317.601 cl + -27339.347 cd + -66.968 pitch + -15580.394 cl^2 +  247064.104 cl cd +  1549.637 cl pitch + -1499320.073 cd^2 +  1234.351 cd pitch + -155.242 pitch^2 +  15833.997 cl^3 + -424241.930 cl^2 cd + -1524.205 cl^2 pitch +  5169206.066 cl cd^2 + -6196.247 cl cd pitch +  205.698 cl pitch^2 + -28237814.841 cd^3 +  295203.967 cd^2 pitch + -2730.532 cd pitch^2 +  5.845 pitch^3",
+    "d(cd)/dt = -21.144 1 +  300.361 cl + -1598.580 cd + -28.012 pitch + -1269.718 cl^2 +  18705.582 cl cd +  170.467 cl pitch + -113481.346 cd^2 + -375.841 cd pitch + -8.865 pitch^2 +  1279.480 cl^3 + -30918.444 cl^2 cd + -168.046 cl^2 pitch +  348900.472 cl cd^2 +  340.477 cl cd pitch +  16.521 cl pitch^2 + -1835417.144 cd^3 +  19012.597 cd^2 pitch + -198.830 cd pitch^2"
+  ]
+}
