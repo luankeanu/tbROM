@@ -353,6 +353,53 @@ search run. This complements the fit equations-history file by preserving how
 the preferred model changes during the tuning process, which will be useful in
 the written report when comparing the baseline and tuned formulations.
 
+## 2026-04-12: Hyperparameter-tuning overhaul
+
+### Revised search style
+The tuning utility has been rewritten to follow a more explicit brute-force
+style closer to the earlier coursework project.
+
+The candidate ranges remain fixed at the top of the file, and the main search
+now uses visible nested loops over:
+- threshold
+- alpha
+- polynomial degree
+
+Each candidate combination is printed before evaluation, and each validation
+case is printed as it is tested.
+
+### Reduced validation-case set
+Instead of leaving out every available training case, the current tuning stage
+now uses a reduced fixed validation subset:
+- B1
+- C1
+- C4
+- C5
+- D1
+- D4
+- D5
+
+For each candidate combination, the model is fit repeatedly while holding out
+one of those selected cases at a time.
+
+### Failure handling
+Some candidate settings can produce numerically unstable models during the
+simulation step.
+
+The tuning utility now treats those combinations as failed candidates rather
+than aborting the whole search. The failed holdout case and the failure message
+are written into the tuning results table so unstable combinations can still be
+reviewed afterwards.
+
+### Final confirmation test
+After the best candidate has been selected from the reduced training-case
+validation set, the utility now performs one final confirmation test on the
+current `T#` cases if they are available.
+
+This confirmation pass is done only once for the winning parameter set, not for
+every candidate combination. The resulting prediction table and summary table
+are exported as separate tuning outputs.
+
 ## 2026-04-11: Analysis-stage baseline
 
 ### Objective of this increment

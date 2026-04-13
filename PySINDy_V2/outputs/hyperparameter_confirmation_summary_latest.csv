@@ -1,0 +1,3 @@
+tuning_run_index,threshold,alpha,polynomial_degree,source_file,case_name,case_group,dataset_role,is_confirmation,rows,rmse_cl,rmse_cd,mae_cl,mae_cd
+1,0.01,0.0,2,T4_OUTPUT.out,T4,T,confirmation,True,7500,0.22562008022044142,0.02252528422612646,0.21564599139146418,0.017259733110818645
+1,0.01,0.0,2,T5_OUTPUT.out,T5,T,confirmation,True,7500,0.222840332683871,0.021166528698113845,0.2089692094776614,0.015506079949508636

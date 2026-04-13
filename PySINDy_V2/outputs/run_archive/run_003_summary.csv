@@ -1,0 +1,2 @@
+run_index,model_fit_index,source_file,case_name,case_group,dataset_role,is_confirmation,rows,rmse_cl,rmse_cd,mae_cl,mae_cd,mean_error_cl,mean_error_cd,cl_true_min,cl_true_max,cl_pred_min,cl_pred_max,cd_true_min,cd_true_max,cd_pred_min,cd_pred_max
+3,6,T1_OUTPUT.out,T1,T,confirmation,True,7500,0.186022795721509,0.009038166895327706,0.16116844042187073,0.007568224024436517,0.1604728884984652,0.0039003047714550754,0.772301,1.075333,0.6333503725323549,1.306716689232541,0.02549919,0.05203782,0.024943500869184187,0.07341544452307264

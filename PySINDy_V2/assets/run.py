@@ -5,6 +5,8 @@ from pathlib import Path
 import json
 import pickle
 import re
+import threading
+import time
 
 import numpy as np
 import pandas as pd
@@ -24,6 +26,7 @@ RUN_ARCHIVE_DIR = OUTPUT_DIR / "run_archive"
 
 LATEST_PREDICTIONS_FILENAME = "latest_confirmation_predictions.csv"
 LATEST_SUMMARY_FILENAME = "latest_confirmation_run_summary.csv"
+SIMULATION_HEARTBEAT_SECONDS = 5.0
 
 SIMULATION_INTEGRATOR_ATTEMPTS = (
     {"integrator": "solve_ivp", "integrator_kws": {"method": "LSODA", "rtol": 1e-12, "atol": 1e-12}},
@@ -299,8 +302,136 @@ which integration method is being tried on the active confirmation case.
 """
 
 
-def _format_integrator_message(case_name: str, method_name: str) -> str:
-    return f"[run] {case_name}: trying integrator {method_name}"
+def _format_integrator_message(
+    case_name: str,
+    method_name: str,
+    attempt_index: int,
+    total_attempts: int,
+    integrator_kws: dict[str, object],
+) -> str:
+    return (
+        f"[run] {case_name}: trying integrator {method_name} "
+        f"({attempt_index}/{total_attempts}) with {integrator_kws}"
+    )
+
+
+"""
+Function: _format_heartbeat_message.
+Builds a periodic status line while one solver attempt is still running. The
+message is intentionally approximate: it confirms activity and elapsed time
+without claiming exact internal solver-step counts.
+"""
+
+
+def _format_heartbeat_message(
+    case_name: str,
+    method_name: str,
+    elapsed_seconds: float,
+    total_steps: int,
+) -> str:
+    return (
+        f"[run] {case_name}: {method_name} still running after "
+        f"{elapsed_seconds:.0f}s on {total_steps} retained steps"
+    )
+
+
+"""
+Function: _format_integrator_failure_message.
+Builds a compact failure line showing the exception type and message returned by
+the solver attempt.
+"""
+
+
+def _format_integrator_failure_message(
+    case_name: str,
+    method_name: str,
+    exc: Exception,
+) -> str:
+    return (
+        f"[run] {case_name}: integrator {method_name} failed with "
+        f"{type(exc).__name__}: {exc}"
+    )
+
+
+"""
+Function: _format_partial_output_message.
+Builds a diagnostic line when an integrator returns only part of the expected
+trajectory rather than the full prediction table.
+"""
+
+
+def _format_partial_output_message(
+    case_name: str,
+    method_name: str,
+    returned_shape: tuple[int, int],
+    expected_shape: tuple[int, int],
+) -> str:
+    return (
+        f"[run] {case_name}: integrator {method_name} returned partial output "
+        f"{returned_shape}, expected {expected_shape}"
+    )
+
+
+"""
+Function: _format_partial_output_tail_message.
+Builds a short diagnostic message showing the last returned predicted state from
+an integrator that stopped early.
+"""
+
+
+def _format_partial_output_tail_message(
+    case_name: str,
+    method_name: str,
+    tail_state: np.ndarray,
+) -> str:
+    return (
+        f"[run] {case_name}: {method_name} last returned state "
+        f"{tail_state.tolist()}"
+    )
+
+
+"""
+Container: _SimulationHeartbeat.
+Wraps a background heartbeat thread so the run stage can keep printing visible
+activity during a long solver call without changing the numerical path itself.
+"""
+
+
+@dataclass
+class _SimulationHeartbeat:
+    case_name: str
+    method_name: str
+    total_steps: int
+    interval_seconds: float = SIMULATION_HEARTBEAT_SECONDS
+    _stop_event: threading.Event | None = None
+    _thread: threading.Thread | None = None
+    _start_time: float = 0.0
+
+    def start(self) -> None:
+        self._stop_event = threading.Event()
+        self._start_time = time.monotonic()
+        self._thread = threading.Thread(target=self._run, daemon=True)
+        self._thread.start()
+
+    def stop(self) -> None:
+        if self._stop_event is not None:
+            self._stop_event.set()
+        if self._thread is not None:
+            self._thread.join(timeout=self.interval_seconds + 1.0)
+
+    def _run(self) -> None:
+        assert self._stop_event is not None
+        while not self._stop_event.wait(self.interval_seconds):
+            elapsed_seconds = time.monotonic() - self._start_time
+            print(
+                _format_heartbeat_message(
+                    case_name=self.case_name,
+                    method_name=self.method_name,
+                    elapsed_seconds=elapsed_seconds,
+                    total_steps=self.total_steps,
+                ),
+                flush=True,
+            )
 
 
 """
@@ -318,13 +449,29 @@ def _simulate_with_fallback_integrators(
     control_values: np.ndarray,
     case_name: str,
     expected_shape: tuple[int, int],
+    total_steps: int,
 ) -> np.ndarray:
     control_function = _control_function(time_values, control_values)
     last_error: Exception | None = None
 
-    for attempt in SIMULATION_INTEGRATOR_ATTEMPTS:
+    for attempt_index, attempt in enumerate(SIMULATION_INTEGRATOR_ATTEMPTS, start=1):
         method_name = str(attempt["integrator_kws"]["method"])
-        print(_format_integrator_message(case_name, method_name), flush=True)
+        print(
+            _format_integrator_message(
+                case_name=case_name,
+                method_name=method_name,
+                attempt_index=attempt_index,
+                total_attempts=len(SIMULATION_INTEGRATOR_ATTEMPTS),
+                integrator_kws=attempt["integrator_kws"],
+            ),
+            flush=True,
+        )
+        heartbeat = _SimulationHeartbeat(
+            case_name=case_name,
+            method_name=method_name,
+            total_steps=total_steps,
+        )
+        heartbeat.start()
         try:
             prediction_array = np.asarray(
                 fitted_model.simulate(
@@ -337,12 +484,18 @@ def _simulate_with_fallback_integrators(
                 dtype=float,
             )
         except Exception as exc:
+            heartbeat.stop()
             last_error = exc
             print(
-                f"[run] {case_name}: integrator {method_name} failed",
+                _format_integrator_failure_message(
+                    case_name=case_name,
+                    method_name=method_name,
+                    exc=exc,
+                ),
                 flush=True,
             )
             continue
+        heartbeat.stop()
 
         if not np.isfinite(prediction_array).all():
             last_error = ValueError(
@@ -360,9 +513,23 @@ def _simulate_with_fallback_integrators(
                 f"instead of expected {expected_shape}."
             )
             print(
-                f"[run] {case_name}: integrator {method_name} returned partial output",
+                _format_partial_output_message(
+                    case_name=case_name,
+                    method_name=method_name,
+                    returned_shape=prediction_array.shape,
+                    expected_shape=expected_shape,
+                ),
                 flush=True,
             )
+            if prediction_array.size:
+                print(
+                    _format_partial_output_tail_message(
+                        case_name=case_name,
+                        method_name=method_name,
+                        tail_state=np.asarray(prediction_array[-1], dtype=float),
+                    ),
+                    flush=True,
+                )
             continue
 
         return prediction_array
@@ -407,6 +574,7 @@ def _simulate_case(fitted_model: object, case_table: pd.DataFrame) -> np.ndarray
         control_values=control_values,
         case_name=case_name,
         expected_shape=(len(ordered_case_table), len(state_columns)),
+        total_steps=total_steps,
     )
 
     if prediction_array.shape != (len(ordered_case_table), len(state_columns)):
