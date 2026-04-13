@@ -151,3 +151,17 @@ Non-zero coefficients: 20
 Equations:
 d(cl)/dt = -140.079 1 + -1364.742 cl +  17726.773 cd +  179.012 pitch +  1849.056 cl^2 + -43118.281 cl cd + -43.074 cl pitch +  194424.758 cd^2 +  1412.220 cd pitch + -21.723 pitch^2
 d(cd)/dt =  20.199 1 + -155.117 cl +  1097.793 cd +  11.097 pitch +  156.993 cl^2 + -2616.973 cl cd + -1.832 cl pitch +  9665.108 cd^2 +  93.758 cd pitch + -1.524 pitch^2
+
+## Fit 12
+Source mode: reused_prepared_outputs
+Training cases: 22
+Training rows: 165000
+Library: polynomial
+Polynomial degree: 2
+Optimizer: stlsq
+Threshold: 0.01
+Alpha: 0.0
+Non-zero coefficients: 20
+Equations:
+d(cl)/dt = -140.079 1 + -1364.742 cl +  17726.773 cd +  179.012 pitch +  1849.056 cl^2 + -43118.281 cl cd + -43.074 cl pitch +  194424.758 cd^2 +  1412.220 cd pitch + -21.723 pitch^2
+d(cd)/dt =  20.199 1 + -155.117 cl +  1097.793 cd +  11.097 pitch +  156.993 cl^2 + -2616.973 cl cd + -1.832 cl pitch +  9665.108 cd^2 +  93.758 cd pitch + -1.524 pitch^2

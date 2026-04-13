@@ -1,6 +1,6 @@
 source_file,case_name,case_group,dataset_role,is_confirmation,raw_rows,retained_rows,missing_values,duplicate_time_rows,monotonic_time,dt_mean,dt_std,is_valid,validation_message
-T4_OUTPUT.out,T4,T,confirmation,True,8000,7500,0,0,True,0.001,3.2216166173216523e-16,True,OK
-T5_OUTPUT.out,T5,T,confirmation,True,8000,7500,0,0,True,0.001,3.2216166173216523e-16,True,OK
+T2_OUTPUT.out,T2,T,confirmation,True,8000,7500,0,0,True,0.001,3.836680210735588e-07,True,OK
+T3_OUTPUT.out,T3,T,confirmation,True,8000,7500,0,0,True,0.001,3.836680210735588e-07,True,OK
 B1_OUTPUT.out,B1,B,train,False,8000,7500,0,0,True,0.001,3.836680210735588e-07,True,OK
 B2_OUTPUT.out,B2,B,train,False,8000,7500,0,0,True,0.001,3.836680210735588e-07,True,OK
 B3_OUTPUT.out,B3,B,train,False,8000,7500,0,0,True,0.001,3.836680210735588e-07,True,OK
