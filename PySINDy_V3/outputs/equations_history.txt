@@ -1,0 +1,167 @@
+## Fit 1
+Source mode: reused_prepared_outputs
+Training cases: 24
+Training rows: 180000
+Library: polynomial
+Polynomial degree: 3
+Optimizer: stlsq
+Threshold: 0.1
+Alpha: 0.05
+Non-zero coefficients: 39
+Equations:
+d(cl)/dt =  11.650 1 +  896.069 cl + -12617.394 cd + -78.491 pitch + -3369.788 cl^2 +  31272.222 cl cd +  467.075 cl pitch +  187283.646 cd^2 + -1675.965 cd pitch + -16.456 pitch^2 +  2805.841 cl^3 + -20213.933 cl^2 cd + -502.323 cl^2 pitch + -458867.577 cl cd^2 +  2778.794 cl cd pitch +  30.700 cl pitch^2 +  1868749.289 cd^3 +  33668.617 cd^2 pitch + -63.700 cd pitch^2 + -0.594 pitch^3
+d(cd)/dt =  4.405 1 +  56.452 cl + -676.459 cd + -3.459 pitch + -237.028 cl^2 +  1480.755 cl cd +  28.306 cl pitch +  13106.664 cd^2 + -93.661 cd pitch + -0.860 pitch^2 +  192.792 cl^3 + -726.511 cl^2 cd + -27.452 cl^2 pitch + -34460.090 cl cd^2 +  130.386 cl cd pitch +  0.920 cl pitch^2 +  128119.622 cd^3 +  2415.067 cd^2 pitch + -3.141 cd pitch^2
+
+## Fit 2
+Source mode: reused_prepared_outputs
+Training cases: 21
+Training rows: 157500
+Library: polynomial
+Polynomial degree: 3
+Optimizer: stlsq
+Threshold: 0.1
+Alpha: 0.05
+Non-zero coefficients: 39
+Equations:
+d(cl)/dt = -742.482 1 +  4317.601 cl + -27339.347 cd + -66.968 pitch + -15580.394 cl^2 +  247064.104 cl cd +  1549.637 cl pitch + -1499320.073 cd^2 +  1234.351 cd pitch + -155.242 pitch^2 +  15833.997 cl^3 + -424241.930 cl^2 cd + -1524.205 cl^2 pitch +  5169206.066 cl cd^2 + -6196.247 cl cd pitch +  205.698 cl pitch^2 + -28237814.841 cd^3 +  295203.967 cd^2 pitch + -2730.532 cd pitch^2 +  5.845 pitch^3
+d(cd)/dt = -21.144 1 +  300.361 cl + -1598.580 cd + -28.012 pitch + -1269.718 cl^2 +  18705.582 cl cd +  170.467 cl pitch + -113481.346 cd^2 + -375.841 cd pitch + -8.865 pitch^2 +  1279.480 cl^3 + -30918.444 cl^2 cd + -168.046 cl^2 pitch +  348900.472 cl cd^2 +  340.477 cl cd pitch +  16.521 cl pitch^2 + -1835417.144 cd^3 +  19012.597 cd^2 pitch + -198.830 cd pitch^2
+
+## Fit 3
+Source mode: reused_prepared_outputs
+Training cases: 21
+Training rows: 157500
+Library: polynomial
+Polynomial degree: 3
+Optimizer: stlsq
+Threshold: 0.1
+Alpha: 0.05
+Non-zero coefficients: 39
+Equations:
+d(cl)/dt = -561.788 1 +  4048.757 cl + -26189.038 cd + -208.826 pitch + -15383.056 cl^2 +  244131.915 cl cd +  1680.819 cl pitch + -1485160.620 cd^2 +  773.250 cd pitch + -119.808 pitch^2 +  16351.448 cl^3 + -439921.759 cl^2 cd + -1842.668 cl^2 pitch +  5332780.390 cl cd^2 + -365.995 cl cd pitch +  233.007 cl pitch^2 + -28812031.438 cd^3 +  263760.266 cd^2 pitch + -3009.904 cd pitch^2 +  0.455 pitch^3
+d(cd)/dt = -21.362 1 +  293.652 cl + -1441.640 cd + -28.551 pitch + -1275.984 cl^2 +  18718.812 cl cd +  178.648 cl pitch + -114911.123 cd^2 + -443.437 cd pitch + -9.235 pitch^2 +  1298.441 cl^3 + -31294.627 cl^2 cd + -177.490 cl^2 pitch +  351936.575 cl cd^2 +  483.091 cl cd pitch +  16.802 cl pitch^2 + -1836653.165 cd^3 +  18376.449 cd^2 pitch + -197.890 cd pitch^2
+
+## Fit 4
+Source mode: reused_prepared_outputs
+Training cases: 22
+Training rows: 165000
+Library: polynomial
+Polynomial degree: 3
+Optimizer: stlsq
+Threshold: 0.1
+Alpha: 0.05
+Non-zero coefficients: 39
+Equations:
+d(cl)/dt = -703.848 1 +  4228.263 cl + -26652.672 cd + -92.153 pitch + -15597.924 cl^2 +  249270.782 cl cd +  1589.430 cl pitch + -1517856.027 cd^2 +  675.931 cd pitch + -148.419 pitch^2 +  15827.170 cl^3 + -422355.506 cl^2 cd + -1536.615 cl^2 pitch +  5099579.978 cl cd^2 + -6121.617 cl cd pitch +  202.451 cl pitch^2 + -27665007.237 cd^3 +  297523.144 cd^2 pitch + -2688.136 cd pitch^2 +  5.196 pitch^3
+d(cd)/dt = -19.319 1 +  291.051 cl + -1528.249 cd + -28.403 pitch + -1265.130 cl^2 +  18802.729 cl cd +  173.005 cl pitch + -114655.874 cd^2 + -418.089 cd pitch + -8.783 pitch^2 +  1280.034 cl^3 + -30906.364 cl^2 cd + -170.042 cl^2 pitch +  345305.344 cl cd^2 +  394.226 cl cd pitch +  16.311 cl pitch^2 + -1795442.982 cd^3 +  18804.949 cd^2 pitch + -196.970 cd pitch^2
+
+## Fit 5
+Source mode: reused_prepared_outputs
+Training cases: 22
+Training rows: 165000
+Library: polynomial
+Polynomial degree: 3
+Optimizer: stlsq
+Threshold: 0.1
+Alpha: 0.05
+Non-zero coefficients: 39
+Equations:
+d(cl)/dt = -703.848 1 +  4228.263 cl + -26652.672 cd + -92.153 pitch + -15597.924 cl^2 +  249270.782 cl cd +  1589.430 cl pitch + -1517856.027 cd^2 +  675.931 cd pitch + -148.419 pitch^2 +  15827.170 cl^3 + -422355.506 cl^2 cd + -1536.615 cl^2 pitch +  5099579.978 cl cd^2 + -6121.617 cl cd pitch +  202.451 cl pitch^2 + -27665007.237 cd^3 +  297523.144 cd^2 pitch + -2688.136 cd pitch^2 +  5.196 pitch^3
+d(cd)/dt = -19.319 1 +  291.051 cl + -1528.249 cd + -28.403 pitch + -1265.130 cl^2 +  18802.729 cl cd +  173.005 cl pitch + -114655.874 cd^2 + -418.089 cd pitch + -8.783 pitch^2 +  1280.034 cl^3 + -30906.364 cl^2 cd + -170.042 cl^2 pitch +  345305.344 cl cd^2 +  394.226 cl cd pitch +  16.311 cl pitch^2 + -1795442.982 cd^3 +  18804.949 cd^2 pitch + -196.970 cd pitch^2
+
+## Fit 6
+Source mode: reused_prepared_outputs
+Training cases: 22
+Training rows: 165000
+Library: polynomial
+Polynomial degree: 3
+Optimizer: stlsq
+Threshold: 0.1
+Alpha: 0.05
+Non-zero coefficients: 39
+Equations:
+d(cl)/dt = -703.848 1 +  4228.263 cl + -26652.672 cd + -92.153 pitch + -15597.924 cl^2 +  249270.782 cl cd +  1589.430 cl pitch + -1517856.027 cd^2 +  675.931 cd pitch + -148.419 pitch^2 +  15827.170 cl^3 + -422355.506 cl^2 cd + -1536.615 cl^2 pitch +  5099579.978 cl cd^2 + -6121.617 cl cd pitch +  202.451 cl pitch^2 + -27665007.237 cd^3 +  297523.144 cd^2 pitch + -2688.136 cd pitch^2 +  5.196 pitch^3
+d(cd)/dt = -19.319 1 +  291.051 cl + -1528.249 cd + -28.403 pitch + -1265.130 cl^2 +  18802.729 cl cd +  173.005 cl pitch + -114655.874 cd^2 + -418.089 cd pitch + -8.783 pitch^2 +  1280.034 cl^3 + -30906.364 cl^2 cd + -170.042 cl^2 pitch +  345305.344 cl cd^2 +  394.226 cl cd pitch +  16.311 cl pitch^2 + -1795442.982 cd^3 +  18804.949 cd^2 pitch + -196.970 cd pitch^2
+
+## Fit 7
+Source mode: reused_prepared_outputs
+Training cases: 22
+Training rows: 165000
+Library: polynomial
+Polynomial degree: 3
+Optimizer: stlsq
+Threshold: 0.1
+Alpha: 0.05
+Non-zero coefficients: 39
+Equations:
+d(cl)/dt = -703.848 1 +  4228.263 cl + -26652.672 cd + -92.153 pitch + -15597.924 cl^2 +  249270.782 cl cd +  1589.430 cl pitch + -1517856.027 cd^2 +  675.931 cd pitch + -148.419 pitch^2 +  15827.170 cl^3 + -422355.506 cl^2 cd + -1536.615 cl^2 pitch +  5099579.978 cl cd^2 + -6121.617 cl cd pitch +  202.451 cl pitch^2 + -27665007.237 cd^3 +  297523.144 cd^2 pitch + -2688.136 cd pitch^2 +  5.196 pitch^3
+d(cd)/dt = -19.319 1 +  291.051 cl + -1528.249 cd + -28.403 pitch + -1265.130 cl^2 +  18802.729 cl cd +  173.005 cl pitch + -114655.874 cd^2 + -418.089 cd pitch + -8.783 pitch^2 +  1280.034 cl^3 + -30906.364 cl^2 cd + -170.042 cl^2 pitch +  345305.344 cl cd^2 +  394.226 cl cd pitch +  16.311 cl pitch^2 + -1795442.982 cd^3 +  18804.949 cd^2 pitch + -196.970 cd pitch^2
+
+## Fit 8
+Source mode: reused_prepared_outputs
+Training cases: 22
+Training rows: 165000
+Library: polynomial
+Polynomial degree: 3
+Optimizer: stlsq
+Threshold: 0.1
+Alpha: 0.05
+Non-zero coefficients: 39
+Equations:
+d(cl)/dt = -703.848 1 +  4228.263 cl + -26652.672 cd + -92.153 pitch + -15597.924 cl^2 +  249270.782 cl cd +  1589.430 cl pitch + -1517856.027 cd^2 +  675.931 cd pitch + -148.419 pitch^2 +  15827.170 cl^3 + -422355.506 cl^2 cd + -1536.615 cl^2 pitch +  5099579.978 cl cd^2 + -6121.617 cl cd pitch +  202.451 cl pitch^2 + -27665007.237 cd^3 +  297523.144 cd^2 pitch + -2688.136 cd pitch^2 +  5.196 pitch^3
+d(cd)/dt = -19.319 1 +  291.051 cl + -1528.249 cd + -28.403 pitch + -1265.130 cl^2 +  18802.729 cl cd +  173.005 cl pitch + -114655.874 cd^2 + -418.089 cd pitch + -8.783 pitch^2 +  1280.034 cl^3 + -30906.364 cl^2 cd + -170.042 cl^2 pitch +  345305.344 cl cd^2 +  394.226 cl cd pitch +  16.311 cl pitch^2 + -1795442.982 cd^3 +  18804.949 cd^2 pitch + -196.970 cd pitch^2
+
+## Fit 9
+Source mode: reused_prepared_outputs
+Training cases: 22
+Training rows: 165000
+Library: polynomial
+Polynomial degree: 3
+Optimizer: stlsq
+Threshold: 0.1
+Alpha: 0.05
+Non-zero coefficients: 39
+Equations:
+d(cl)/dt = -703.848 1 +  4228.263 cl + -26652.672 cd + -92.153 pitch + -15597.924 cl^2 +  249270.782 cl cd +  1589.430 cl pitch + -1517856.027 cd^2 +  675.931 cd pitch + -148.419 pitch^2 +  15827.170 cl^3 + -422355.506 cl^2 cd + -1536.615 cl^2 pitch +  5099579.978 cl cd^2 + -6121.617 cl cd pitch +  202.451 cl pitch^2 + -27665007.237 cd^3 +  297523.144 cd^2 pitch + -2688.136 cd pitch^2 +  5.196 pitch^3
+d(cd)/dt = -19.319 1 +  291.051 cl + -1528.249 cd + -28.403 pitch + -1265.130 cl^2 +  18802.729 cl cd +  173.005 cl pitch + -114655.874 cd^2 + -418.089 cd pitch + -8.783 pitch^2 +  1280.034 cl^3 + -30906.364 cl^2 cd + -170.042 cl^2 pitch +  345305.344 cl cd^2 +  394.226 cl cd pitch +  16.311 cl pitch^2 + -1795442.982 cd^3 +  18804.949 cd^2 pitch + -196.970 cd pitch^2
+
+## Fit 10
+Source mode: reused_prepared_outputs
+Training cases: 22
+Training rows: 165000
+Library: polynomial
+Polynomial degree: 3
+Optimizer: stlsq
+Threshold: 0.1
+Alpha: 0.05
+Non-zero coefficients: 39
+Equations:
+d(cl)/dt = -703.848 1 +  4228.263 cl + -26652.672 cd + -92.153 pitch + -15597.924 cl^2 +  249270.782 cl cd +  1589.430 cl pitch + -1517856.027 cd^2 +  675.931 cd pitch + -148.419 pitch^2 +  15827.170 cl^3 + -422355.506 cl^2 cd + -1536.615 cl^2 pitch +  5099579.978 cl cd^2 + -6121.617 cl cd pitch +  202.451 cl pitch^2 + -27665007.237 cd^3 +  297523.144 cd^2 pitch + -2688.136 cd pitch^2 +  5.196 pitch^3
+d(cd)/dt = -19.319 1 +  291.051 cl + -1528.249 cd + -28.403 pitch + -1265.130 cl^2 +  18802.729 cl cd +  173.005 cl pitch + -114655.874 cd^2 + -418.089 cd pitch + -8.783 pitch^2 +  1280.034 cl^3 + -30906.364 cl^2 cd + -170.042 cl^2 pitch +  345305.344 cl cd^2 +  394.226 cl cd pitch +  16.311 cl pitch^2 + -1795442.982 cd^3 +  18804.949 cd^2 pitch + -196.970 cd pitch^2
+
+## Fit 11
+Source mode: reused_prepared_outputs
+Training cases: 22
+Training rows: 165000
+Library: polynomial
+Polynomial degree: 2
+Optimizer: stlsq
+Threshold: 0.01
+Alpha: 0.0
+Non-zero coefficients: 20
+Equations:
+d(cl)/dt = -140.079 1 + -1364.742 cl +  17726.773 cd +  179.012 pitch +  1849.056 cl^2 + -43118.281 cl cd + -43.074 cl pitch +  194424.758 cd^2 +  1412.220 cd pitch + -21.723 pitch^2
+d(cd)/dt =  20.199 1 + -155.117 cl +  1097.793 cd +  11.097 pitch +  156.993 cl^2 + -2616.973 cl cd + -1.832 cl pitch +  9665.108 cd^2 +  93.758 cd pitch + -1.524 pitch^2
+
+## Fit 12
+Source mode: reused_prepared_outputs
+Training cases: 22
+Training rows: 165000
+Library: polynomial
+Polynomial degree: 2
+Optimizer: stlsq
+Threshold: 0.01
+Alpha: 0.0
+Non-zero coefficients: 20
+Equations:
+d(cl)/dt = -140.079 1 + -1364.742 cl +  17726.773 cd +  179.012 pitch +  1849.056 cl^2 + -43118.281 cl cd + -43.074 cl pitch +  194424.758 cd^2 +  1412.220 cd pitch + -21.723 pitch^2
+d(cd)/dt =  20.199 1 + -155.117 cl +  1097.793 cd +  11.097 pitch +  156.993 cl^2 + -2616.973 cl cd + -1.832 cl pitch +  9665.108 cd^2 +  93.758 cd pitch + -1.524 pitch^2

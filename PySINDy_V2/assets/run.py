@@ -48,6 +48,7 @@ REQUIRED_CONFIRMATION_COLUMNS = {
     "cl",
     "cd",
     "pitch",
+    "pitch_rate",
 }
 
 REQUIRED_VALIDATION_COLUMNS = {

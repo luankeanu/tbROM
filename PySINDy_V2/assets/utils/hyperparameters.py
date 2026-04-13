@@ -34,7 +34,8 @@ THRESHOLD_VALUES = [0.01, 0.05, 0.1, 0.2]
 ALPHA_VALUES = [0.0, 0.01, 0.05, 0.1]
 POLYNOMIAL_DEGREE_VALUES = [2, 3, 4]
 
-VALIDATION_CASE_NAMES = ("B1", "B2")
+VALIDATION_CASE_NAMES = ("B1", "C1", "C4", "C5", "D1", "D4", "D5")
+AMPLITUDE_PENALTY_WEIGHT = 0.5
 
 RESULTS_FILENAME = "hyperparameter_results_latest.csv"
 BEST_SUMMARY_FILENAME = "hyperparameter_best_summary_latest.json"
@@ -90,9 +91,22 @@ def _next_tuning_run_index(history_path: Path) -> int:
 
 
 """
+Function: _relative_difference.
+Returns the relative difference between two positive values. The helper keeps
+the amplitude-penalty terms numerically stable when one value is very small.
+"""
+
+
+def _relative_difference(reference_value: float, candidate_value: float) -> float:
+    scale = max(abs(reference_value), 1e-12)
+    return abs(candidate_value - reference_value) / scale
+
+
+"""
 Function: _validation_metrics.
 Builds the case-level metrics used to rank candidate parameter combinations.
-The tuning score is the mean of RMSE for `cl` and `cd`.
+The score combines RMSE with an amplitude-preservation penalty so heavily
+damped trajectories no longer look artificially strong.
 """
 
 
@@ -104,13 +118,42 @@ def _validation_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> dict[str, flo
     rmse_cd = float(np.sqrt(np.mean(np.square(cd_residual))))
     mae_cl = float(np.mean(np.abs(cl_residual)))
     mae_cd = float(np.mean(np.abs(cd_residual)))
-    score = float(np.mean([rmse_cl, rmse_cd]))
+
+    cl_true_range = float(np.max(y_true[:, 0]) - np.min(y_true[:, 0]))
+    cl_pred_range = float(np.max(y_pred[:, 0]) - np.min(y_pred[:, 0]))
+    cd_true_range = float(np.max(y_true[:, 1]) - np.min(y_true[:, 1]))
+    cd_pred_range = float(np.max(y_pred[:, 1]) - np.min(y_pred[:, 1]))
+
+    cl_true_std = float(np.std(y_true[:, 0]))
+    cl_pred_std = float(np.std(y_pred[:, 0]))
+    cd_true_std = float(np.std(y_true[:, 1]))
+    cd_pred_std = float(np.std(y_pred[:, 1]))
+
+    cl_range_penalty = _relative_difference(cl_true_range, cl_pred_range)
+    cd_range_penalty = _relative_difference(cd_true_range, cd_pred_range)
+    cl_std_penalty = _relative_difference(cl_true_std, cl_pred_std)
+    cd_std_penalty = _relative_difference(cd_true_std, cd_pred_std)
+    amplitude_penalty = float(
+        np.mean([cl_range_penalty, cd_range_penalty, cl_std_penalty, cd_std_penalty])
+    )
+
+    rmse_score = float(np.mean([rmse_cl, rmse_cd]))
+    score = float(rmse_score + AMPLITUDE_PENALTY_WEIGHT * amplitude_penalty)
 
     return {
         "rmse_cl": rmse_cl,
         "rmse_cd": rmse_cd,
         "mae_cl": mae_cl,
         "mae_cd": mae_cd,
+        "cl_true_range": cl_true_range,
+        "cl_pred_range": cl_pred_range,
+        "cd_true_range": cd_true_range,
+        "cd_pred_range": cd_pred_range,
+        "cl_true_std": cl_true_std,
+        "cl_pred_std": cl_pred_std,
+        "cd_true_std": cd_true_std,
+        "cd_pred_std": cd_pred_std,
+        "amplitude_penalty": amplitude_penalty,
         "score": score,
     }
 
@@ -238,6 +281,7 @@ def _append_equation_history(
         f"Mean RMSE cd: {best_row['mean_rmse_cd']}",
         f"Mean MAE cl: {best_row['mean_mae_cl']}",
         f"Mean MAE cd: {best_row['mean_mae_cd']}",
+        f"Mean amplitude penalty: {best_row['mean_amplitude_penalty']}",
         f"Validation cases: {best_row['validation_case_count']}",
         f"Library: {model_summary['library_type']}",
         f"Optimizer: {model_summary['optimizer_type']}",
@@ -524,6 +568,7 @@ def run_hyperparameter_search() -> HyperparameterSearchOutput:
                         f"[tuning] result for {holdout_name}: "
                         f"rmse_cl={metrics['rmse_cl']:.6f}, "
                         f"rmse_cd={metrics['rmse_cd']:.6f}, "
+                        f"amplitude_penalty={metrics['amplitude_penalty']:.6f}, "
                         f"score={metrics['score']:.6f}",
                         flush=True,
                     )
@@ -537,6 +582,7 @@ def run_hyperparameter_search() -> HyperparameterSearchOutput:
                         "mean_rmse_cd": float("inf"),
                         "mean_mae_cl": float("inf"),
                         "mean_mae_cd": float("inf"),
+                        "mean_amplitude_penalty": float("inf"),
                         "mean_score": float("inf"),
                         "validation_case_count": len(fold_metrics),
                         "candidate_status": "failed",
@@ -552,6 +598,9 @@ def run_hyperparameter_search() -> HyperparameterSearchOutput:
                         "mean_rmse_cd": float(np.mean([row["rmse_cd"] for row in fold_metrics])),
                         "mean_mae_cl": float(np.mean([row["mae_cl"] for row in fold_metrics])),
                         "mean_mae_cd": float(np.mean([row["mae_cd"] for row in fold_metrics])),
+                        "mean_amplitude_penalty": float(
+                            np.mean([row["amplitude_penalty"] for row in fold_metrics])
+                        ),
                         "mean_score": float(np.mean([row["score"] for row in fold_metrics])),
                         "validation_case_count": len(validation_case_names),
                         "candidate_status": "ok",
@@ -622,7 +671,7 @@ def run_hyperparameter_search() -> HyperparameterSearchOutput:
             "alpha": ALPHA_VALUES,
             "polynomial_degree": POLYNOMIAL_DEGREE_VALUES,
         },
-        "score_metric": "mean_rmse_of_cl_and_cd",
+        "score_metric": "mean_rmse_plus_amplitude_penalty",
         "validation_strategy": "leave_one_selected_training_case_out",
         "best_parameters": {
             "threshold": float(best_row["threshold"]),
@@ -635,6 +684,7 @@ def run_hyperparameter_search() -> HyperparameterSearchOutput:
             "mean_rmse_cd": float(best_row["mean_rmse_cd"]),
             "mean_mae_cl": float(best_row["mean_mae_cl"]),
             "mean_mae_cd": float(best_row["mean_mae_cd"]),
+            "mean_amplitude_penalty": float(best_row["mean_amplitude_penalty"]),
         },
         "applied_to_model": applied_to_model,
         "final_confirmation_available": not confirmation_summary_table.empty,

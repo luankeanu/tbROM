@@ -20,11 +20,11 @@ used by default when building the baseline PySINDy model.
 
 MODEL_NAME = "baseline_pysindy_control_model"
 MODEL_DESCRIPTION = (
-    "Sparse polynomial SINDy model with cl/cd as states and pitch as control."
+    "Sparse polynomial SINDy model with cl/cd as states and pitch plus pitch_rate as controls."
 )
 
 STATE_COLUMNS = ("cl", "cd")
-CONTROL_COLUMNS = ("pitch",)
+CONTROL_COLUMNS = ("pitch", "pitch_rate")
 TIME_COLUMN = "flow_time"
 
 DEFAULT_LIBRARY_TYPE = "polynomial"
@@ -63,7 +63,7 @@ def get_state_columns() -> list[str]:
 """
 Function: get_control_columns.
 Returns the ordered names of the external control inputs. The current V2 design
-uses the pitch history as the only forcing signal.
+uses the pitch history and its first derivative as the forcing signals.
 """
 
 

@@ -1,0 +1,38 @@
+{
+  "fit_index": 12,
+  "source_mode": "reused_prepared_outputs",
+  "train_case_count": 22,
+  "train_row_count": 165000,
+  "nonzero_coefficient_count": 20,
+  "coefficient_matrix_shape": [
+    2,
+    10
+  ],
+  "model_summary": {
+    "model_name": "baseline_pysindy_control_model",
+    "description": "Sparse polynomial SINDy model with cl/cd as states and pitch as control.",
+    "state_columns": [
+      "cl",
+      "cd"
+    ],
+    "control_columns": [
+      "pitch"
+    ],
+    "time_column": "flow_time",
+    "library_type": "polynomial",
+    "polynomial_degree": 2,
+    "include_bias": true,
+    "include_interaction": true,
+    "optimizer_type": "stlsq",
+    "threshold": 0.01,
+    "alpha": 0.0,
+    "max_iter": 20,
+    "normalize_columns": false,
+    "differentiation_type": "finite_difference",
+    "finite_difference_order": 2
+  },
+  "equations": [
+    "d(cl)/dt = -140.079 1 + -1364.742 cl +  17726.773 cd +  179.012 pitch +  1849.056 cl^2 + -43118.281 cl cd + -43.074 cl pitch +  194424.758 cd^2 +  1412.220 cd pitch + -21.723 pitch^2",
+    "d(cd)/dt =  20.199 1 + -155.117 cl +  1097.793 cd +  11.097 pitch +  156.993 cl^2 + -2616.973 cl cd + -1.832 cl pitch +  9665.108 cd^2 +  93.758 cd pitch + -1.524 pitch^2"
+  ]
+}

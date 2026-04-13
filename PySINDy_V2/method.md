@@ -391,6 +391,25 @@ than aborting the whole search. The failed holdout case and the failure message
 are written into the tuning results table so unstable combinations can still be
 reviewed afterwards.
 
+### Amplitude-preservation penalty
+The tuning score no longer relies only on RMSE.
+
+An additional amplitude-preservation penalty is now included so the tuning stage
+penalises candidates that reproduce the mean level of the trajectory but damp
+the oscillation too strongly.
+
+The penalty compares the true and predicted:
+- signal range for `cl` and `cd`
+- standard deviation for `cl` and `cd`
+
+The final score is therefore a combination of:
+- mean RMSE across `cl` and `cd`
+- a weighted penalty for amplitude mismatch
+
+This change was introduced because some candidate models were producing
+under-oscillatory confirmation predictions that looked acceptable by RMSE alone
+but were clearly too damped in the plots.
+
 ### Final confirmation test
 After the best candidate has been selected from the reduced training-case
 validation set, the utility now performs one final confirmation test on the
@@ -448,3 +467,29 @@ Tuned-versus-untuned comparison plots are intentionally deferred.
 The current analysis stage includes a clear placeholder note for that future
 extension, but no tuned-comparison figures are implemented yet because the
 tuned workflow and its output structure are not final yet.
+
+## 2026-04-13: Second control input via pitch-rate
+
+### Objective of this increment
+The V2 workflow now includes the first derivative of pitch as a second control
+input in addition to pitch itself.
+
+### Read-stage treatment
+`read.py` now computes:
+- `pitch(t)` from `atan2(vy, vx)` in degrees
+- `pitch_rate(t)` as the time derivative of pitch with respect to `flow_time`
+
+Both columns are exported into the prepared train and confirmation tables.
+
+### Model and run-stage impact
+The PySINDy model now uses:
+- state variables: `cl`, `cd`
+- control variables: `pitch`, `pitch_rate`
+
+This means the fitted model is now learned from two inputs and two outputs
+rather than one input and two outputs.
+
+### Analysis-stage impact
+The overview analysis plots now include `pitch_rate` alongside the existing
+`cl`, `cd`, and `pitch` figures so the added input signal can be inspected
+directly.

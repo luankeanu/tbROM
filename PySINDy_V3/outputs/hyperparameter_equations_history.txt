@@ -1,0 +1,15 @@
+## Tuning Run 1
+Threshold: 0.01
+Alpha: 0.0
+Polynomial degree: 2
+Mean score: 0.06562579577235517
+Mean RMSE cl: 0.1203879799908302
+Mean RMSE cd: 0.010863611553880125
+Mean MAE cl: 0.09961376665553814
+Mean MAE cd: 0.009098931124159229
+Validation cases: 2
+Library: polynomial
+Optimizer: stlsq
+Equations:
+d(cl)/dt = -140.079 1 + -1364.742 cl +  17726.773 cd +  179.012 pitch +  1849.056 cl^2 + -43118.281 cl cd + -43.074 cl pitch +  194424.758 cd^2 +  1412.220 cd pitch + -21.723 pitch^2
+d(cd)/dt =  20.199 1 + -155.117 cl +  1097.793 cd +  11.097 pitch +  156.993 cl^2 + -2616.973 cl cd + -1.832 cl pitch +  9665.108 cd^2 +  93.758 cd pitch + -1.524 pitch^2

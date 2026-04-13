@@ -40,6 +40,7 @@ REQUIRED_TRAIN_COLUMNS = {
     "cl",
     "cd",
     "pitch",
+    "pitch_rate",
 }
 
 REQUIRED_VALIDATION_COLUMNS = {
